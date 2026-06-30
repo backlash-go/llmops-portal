@@ -1,0 +1,10 @@
+
+
+```
+GET /ops/api/v1/users/me
+
+
+{
+
+}
+```
