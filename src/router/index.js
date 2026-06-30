@@ -61,30 +61,8 @@ export const constantRoutes = [
     children: [{
       path: '',
       name: 'ApiKeys',
-      component: () => import('@/views/placeholder/index'),
+      component: () => import('@/views/api-keys/index'),
       meta: { title: 'API keys', icon: 'el-icon-search' }
-    }]
-  },
-
-  {
-    path: '/recharge',
-    component: Layout,
-    children: [{
-      path: '',
-      name: 'Recharge',
-      component: () => import('@/views/placeholder/index'),
-      meta: { title: '充值', icon: 'el-icon-bank-card' }
-    }]
-  },
-
-  {
-    path: '/billing',
-    component: Layout,
-    children: [{
-      path: '',
-      name: 'Billing',
-      component: () => import('@/views/placeholder/index'),
-      meta: { title: '账单', icon: 'el-icon-message' }
     }]
   },
 
@@ -107,6 +85,17 @@ export const constantRoutes = [
       name: 'Faq',
       component: () => import('@/views/placeholder/index'),
       meta: { title: '常见问题', icon: 'el-icon-question' }
+    }]
+  },
+
+  {
+    path: '/profile',
+    component: Layout,
+    children: [{
+      path: '',
+      name: 'Profile',
+      component: () => import('@/views/placeholder/index'),
+      meta: { title: '个人信息', icon: 'el-icon-user' }
     }]
   },
   // 404 page must be placed at the end !!!

@@ -8,13 +8,11 @@
         </div>
         <div class="brand-text">
           <h1>LuxAI 开放平台</h1>
-          <p>统一身份认证登录</p>
         </div>
       </div>
 
       <div class="login-copy">
-        <h2>进入运营控制台</h2>
-        <p>通过统一身份认证访问用量、账单和 API Key 管理。</p>
+        <p>登录后可查看模型调用用量、管理 API Key。</p>
       </div>
 
       <div v-if="loginError.message" class="login-error">
@@ -29,13 +27,8 @@
         <span class="button-icon">
           <svg-icon icon-class="link" />
         </span>
-        <span>使用 Keycloak 认证</span>
+        <span>点击 SSO 登录</span>
       </el-button>
-
-      <div class="security-note">
-        <span class="note-dot" />
-        <span>企业账号登录，认证完成后自动返回控制台。</span>
-      </div>
     </section>
   </div>
 </template>
@@ -138,9 +131,9 @@ export default {
 
   .login-panel {
     position: relative;
-    width: 464px;
+    width: 504px;
     max-width: 100%;
-    padding: 50px 52px 38px;
+    padding: 58px 58px 46px;
     overflow: hidden;
     border: 1px solid rgba(148, 163, 184, .28);
     border-radius: 8px;
@@ -162,7 +155,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 34px;
     text-align: center;
   }
 
@@ -171,12 +164,12 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 72px;
-    height: 72px;
-    margin-bottom: 18px;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
     border-radius: 16px;
     color: #fff;
-    font-size: 33px;
+    font-size: 36px;
     font-weight: 700;
     background: linear-gradient(145deg, #316dca 0%, #2f9e8f 100%);
     box-shadow: 0 14px 32px rgba(37, 99, 235, .24);
@@ -184,10 +177,10 @@ export default {
     &::after {
       content: '';
       position: absolute;
-      right: -7px;
-      bottom: 10px;
-      width: 18px;
-      height: 18px;
+      right: -8px;
+      bottom: 11px;
+      width: 20px;
+      height: 20px;
       border: 4px solid #fff;
       border-radius: 50%;
       background: #f97316;
@@ -198,7 +191,7 @@ export default {
     h1 {
       margin: 0 0 8px;
       color: #111827;
-      font-size: 28px;
+      font-size: 30px;
       line-height: 1.2;
       font-weight: 700;
     }
@@ -211,8 +204,8 @@ export default {
   }
 
   .login-copy {
-    margin-bottom: 18px;
-    padding: 18px 20px 17px;
+    margin-bottom: 22px;
+    padding: 21px 24px 20px;
     border: 1px solid #e5edf8;
     border-radius: 8px;
     background: linear-gradient(180deg, #f8fbff 0%, #f5f8fc 100%);
@@ -229,7 +222,7 @@ export default {
     p {
       margin: 0;
       color: #64748b;
-      font-size: 14px;
+      font-size: 15px;
       line-height: 1.65;
     }
   }
@@ -272,7 +265,7 @@ export default {
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 46px;
+    height: 50px;
     border-color: #316dca;
     background: #316dca;
     box-shadow: 0 12px 24px rgba(49, 109, 202, .22);
@@ -283,7 +276,7 @@ export default {
       justify-content: center;
       width: 24px;
       height: 24px;
-      margin-right: 8px;
+      margin-right: 10px;
       border-radius: 5px;
       background: rgba(255, 255, 255, .16);
     }
@@ -301,25 +294,6 @@ export default {
     }
   }
 
-  .security-note {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 18px;
-    color: #64748b;
-    font-size: 13px;
-    line-height: 1.6;
-    text-align: center;
-  }
-
-  .note-dot {
-    width: 7px;
-    height: 7px;
-    margin-right: 8px;
-    border-radius: 50%;
-    background: #2f9e8f;
-    box-shadow: 0 0 0 4px rgba(47, 158, 143, .12);
-  }
 }
 
 @media (max-width: 560px) {
@@ -327,7 +301,13 @@ export default {
     padding: 18px;
 
     .login-panel {
-      padding: 38px 24px 30px;
+      padding: 42px 26px 34px;
+    }
+
+    .brand-mark {
+      width: 72px;
+      height: 72px;
+      font-size: 33px;
     }
 
     .brand-text h1 {
