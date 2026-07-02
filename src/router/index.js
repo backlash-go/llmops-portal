@@ -50,7 +50,7 @@ export const constantRoutes = [
     children: [{
       path: 'usage',
       name: 'Usage',
-      component: () => import('@/views/placeholder/index'),
+      component: () => import('@/views/usage/index'),
       meta: { title: '用量信息', icon: 'el-icon-s-data' }
     }]
   },
