@@ -1,5 +1,15 @@
 <template>
   <div class="login-container">
+    <transition name="login-error-toast">
+      <div v-if="toastError.visible" class="login-error-toast">
+        <i class="el-icon-warning-outline" />
+        <div>
+          <strong>{{ toastError.message }}</strong>
+          <span v-if="toastError.requestId">请求 ID：{{ toastError.requestId }}</span>
+        </div>
+      </div>
+    </transition>
+
     <section class="login-shell">
       <div class="brand-panel">
         <div class="brand-row">
@@ -26,14 +36,6 @@
           <p>请用工号和密码访问 AI 开放平台。</p>
         </div>
 
-        <div v-if="loginError.message" class="login-error">
-          <i class="el-icon-warning-outline" />
-          <div>
-            <strong>{{ loginError.message }}</strong>
-            <span v-if="loginError.requestId">请求 ID：{{ loginError.requestId }}</span>
-          </div>
-        </div>
-
         <el-button class="keycloak-button" :loading="loading" type="primary" @click.native.prevent="handleKeycloakLogin">
           <span class="button-icon">
             <svg-icon icon-class="link" />
@@ -56,7 +58,13 @@ export default {
         message: '',
         requestId: ''
       },
-      notifiedErrorKey: ''
+      notifiedErrorKey: '',
+      toastError: {
+        visible: false,
+        message: '',
+        requestId: ''
+      },
+      toastTimer: null
     }
   },
   computed: {
@@ -73,6 +81,9 @@ export default {
       immediate: true
     }
   },
+  beforeDestroy() {
+    this.clearToastTimer()
+  },
   methods: {
     syncLoginError(route) {
       const searchParams = new URLSearchParams(window.location.search)
@@ -87,13 +98,52 @@ export default {
       const errorKey = `${message}|${requestId}`
       if (message && errorKey !== this.notifiedErrorKey) {
         this.notifiedErrorKey = errorKey
-        const requestText = requestId ? `，请求 ID：${requestId}` : ''
-        this.$message.error(`${message}${requestText}`)
+        this.showLoginErrorToast(message, requestId)
       }
 
-      if (searchParams.has('llmops_error')) {
-        const cleanUrl = `${window.location.origin}${window.location.pathname}${window.location.hash}`
+      this.cleanLoginErrorQuery(route, searchParams)
+    },
+    cleanLoginErrorQuery(route, searchParams) {
+      const routeQuery = { ...(route.query || {}) }
+      let shouldReplaceRoute = false
+
+      if (Object.prototype.hasOwnProperty.call(routeQuery, 'llmops_error')) {
+        delete routeQuery.llmops_error
+        shouldReplaceRoute = true
+      }
+      if (Object.prototype.hasOwnProperty.call(routeQuery, 'request_id')) {
+        delete routeQuery.request_id
+        shouldReplaceRoute = true
+      }
+
+      if (shouldReplaceRoute) {
+        this.$router.replace({ path: route.path, query: routeQuery })
+        return
+      }
+
+      if (searchParams.has('llmops_error') || searchParams.has('request_id')) {
+        searchParams.delete('llmops_error')
+        searchParams.delete('request_id')
+        const query = searchParams.toString()
+        const cleanUrl = `${window.location.origin}${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`
         window.history.replaceState(null, document.title, cleanUrl)
+      }
+    },
+    showLoginErrorToast(message, requestId) {
+      this.clearToastTimer()
+      this.toastError = {
+        visible: true,
+        message,
+        requestId
+      }
+      this.toastTimer = window.setTimeout(() => {
+        this.toastError.visible = false
+      }, 3000)
+    },
+    clearToastTimer() {
+      if (this.toastTimer) {
+        window.clearTimeout(this.toastTimer)
+        this.toastTimer = null
       }
     },
     handleKeycloakLogin() {
@@ -138,6 +188,60 @@ export default {
     linear-gradient(180deg, rgba(48, 128, 255, .035) 1px, transparent 1px),
     linear-gradient(135deg, #fafdff 0%, #eef6ff 54%, #f8fbff 100%);
   background-size: 28px 28px, 28px 28px, auto;
+
+  .login-error-toast {
+    position: fixed;
+    top: 78px;
+    left: 50%;
+    z-index: 20;
+    display: flex;
+    align-items: flex-start;
+    width: min(700px, calc(100% - 48px));
+    min-height: 64px;
+    padding: 15px 18px;
+    border: 1px solid #ffd1d1;
+    border-radius: 8px;
+    background: rgba(255, 246, 246, .96);
+    box-shadow: 0 14px 30px rgba(153, 27, 27, .08);
+    color: #9f1d1d;
+    transform: translateX(-50%);
+
+    i {
+      flex: none;
+      margin: 3px 12px 0 0;
+      color: #ef6262;
+      font-size: 17px;
+    }
+
+    strong {
+      display: block;
+      color: #9f1d1d;
+      font-size: 15px;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+
+    span {
+      display: block;
+      margin-top: 4px;
+      color: #c05a1a;
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 600;
+      word-break: break-all;
+    }
+  }
+
+  .login-error-toast-enter-active,
+  .login-error-toast-leave-active {
+    transition: opacity .2s ease, transform .2s ease;
+  }
+
+  .login-error-toast-enter,
+  .login-error-toast-leave-to {
+    opacity: 0;
+    transform: translate(-50%, -8px);
+  }
 
   .login-shell {
     display: grid;
@@ -273,39 +377,6 @@ export default {
     }
   }
 
-  .login-error {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 18px;
-    padding: 12px 14px;
-    border: 1px solid #fecaca;
-    border-radius: 8px;
-    color: #991b1b;
-    background: #fff1f2;
-    text-align: left;
-
-    i {
-      margin: 2px 8px 0 0;
-      font-size: 17px;
-    }
-
-    strong {
-      display: block;
-      font-size: 14px;
-      line-height: 1.5;
-      font-weight: 600;
-    }
-
-    span {
-      display: block;
-      margin-top: 3px;
-      color: #b45309;
-      font-size: 12px;
-      line-height: 1.5;
-      word-break: break-all;
-    }
-  }
-
   .keycloak-button {
     display: flex;
     align-items: center;
@@ -344,6 +415,13 @@ export default {
 @media (max-width: 820px) {
   .login-container {
     padding: 18px;
+
+    .login-error-toast {
+      top: 22px;
+      width: calc(100% - 28px);
+      min-height: 60px;
+      padding: 13px 14px;
+    }
 
     .login-shell {
       grid-template-columns: 1fr;

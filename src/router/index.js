@@ -94,7 +94,7 @@ export const constantRoutes = [
     children: [{
       path: '',
       name: 'Profile',
-      component: () => import('@/views/placeholder/index'),
+      component: () => import('@/views/profile/index'),
       meta: { title: '个人信息', icon: 'el-icon-user' }
     }]
   },
